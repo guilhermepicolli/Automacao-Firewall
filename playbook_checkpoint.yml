@@ -1,0 +1,77 @@
+- name: Adicionar objeto à regra 'Senha Segura' no Checkpoint R82
+  hosts: checkpoint_r82
+  gather_facts: no
+  vars:
+    nome_objeto: "{{ nome_objeto }}"
+    novo_ip: "{{ novo_ip }}"
+  tasks:
+    - name: Login na API
+      uri:
+        url: "{{ cp_mgmt }}/web_api/login"
+        method: POST
+        body_format: json
+        body:
+          user: "{{ cp_user }}"
+          password: "{{ cp_password }}"
+        return_content: yes
+        validate_certs: no
+      register: login_response
+
+    - set_fact:
+        sid: "{{ login_response.json.sid }}"
+
+    - name: Criar objeto de host
+      uri:
+        url: "{{ cp_mgmt }}/web_api/add-host"
+        method: POST
+        headers:
+          X-chkp-sid: "{{ sid }}"
+        body_format: json
+        body:
+          name: "{{ nome_objeto }}"
+          ip-address: "{{ novo_ip }}"
+          type: "host"
+        validate_certs: no
+
+    - name: Buscar regra 'Senha Segura'
+      uri:
+        url: "{{ cp_mgmt }}/web_api/show-access-rule"
+        method: POST
+        headers:
+          X-chkp-sid: "{{ sid }}"
+        body_format: json
+        body:
+          layer: "Network"
+          name: "Senha Segura"
+        return_content: yes
+        validate_certs: no
+      register: regra_senha_segura
+
+    - name: Atualizar regra com novo destino
+      uri:
+        url: "{{ cp_mgmt }}/web_api/set-access-rule"
+        method: POST
+        headers:
+          X-chkp-sid: "{{ sid }}"
+        body_format: json
+        body:
+          layer: "Network"
+          rule-number: "{{ regra_senha_segura.json.rule-number }}"
+          destination: "{{ regra_senha_segura.json.destination + [nome_objeto] }}"
+        validate_certs: no
+
+    - name: Publicar alterações
+      uri:
+        url: "{{ cp_mgmt }}/web_api/publish"
+        method: POST
+        headers:
+          X-chkp-sid: "{{ sid }}"
+        validate_certs: no
+
+    - name: Logout
+      uri:
+        url: "{{ cp_mgmt }}/web_api/logout"
+        method: POST
+        headers:
+          X-chkp-sid: "{{ sid }}"
+        validate_certs: no

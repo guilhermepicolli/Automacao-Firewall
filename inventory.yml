@@ -1,0 +1,16 @@
+all:
+  children:
+    juniper_srx:
+      hosts:
+        srx-firewall:
+          ansible_host: 10.0.0.1
+          ansible_user: admin
+          ansible_password: senha_srx
+          ansible_network_os: junos
+    checkpoint_r82:
+      hosts:
+        checkpoint-mgmt:
+          ansible_host: 10.0.0.2
+          cp_user: api_user
+          cp_password: api_pass
+          cp_mgmt: https://10.0.0.2
