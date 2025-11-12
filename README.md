@@ -7,7 +7,7 @@ Este projeto automatiza a criação de objetos e aplicação de regras nos firew
 - `inventory.yml`: inventário com IPs e credenciais
 - `playbook_srx.yml`: aplica regras no Juniper SRX via SSH
 - `playbook_checkpoint.yml`: aplica regras no Checkpoint via API REST
-- `templates/`: regras padrão para Linux e Windows
+- `teste_srx`: Teste para srx
 
 ## Como usar no AWX
 
@@ -17,3 +17,4 @@ Este projeto automatiza a criação de objetos e aplicação de regras nos firew
    - `nome_objeto`
    - `novo_ip`
 4. Execute via GUI e acompanhe os logs
+
