@@ -1,0 +1,12 @@
+- name: Criar objeto e aplicar regra no Juniper SRX
+  hosts: juniper_srx
+  gather_facts: no
+  vars:
+    nome_objeto: "{{ nome_objeto }}"
+    novo_ip: "{{ novo_ip }}"
+  tasks:
+    - name: Criar objeto no address-book
+      junos_config:
+        lines:
+          - "set security zones security-zone WAN_MPLS address-book address {{ nome_objeto }} {{ novo_ip }}"
+        confirm: yes
