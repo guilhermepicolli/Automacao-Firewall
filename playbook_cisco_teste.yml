@@ -1,0 +1,13 @@
+- name: Criar VLAN em switch Cisco 2960
+  hosts: cisco_switches
+  gather_facts: no
+  vars:
+    vlan_id: "{{ vlan_id }}"
+    vlan_name: "{{ vlan_name }}"
+  tasks:
+    - name: Criar VLAN
+      cisco.ios.ios_config:
+        lines:
+          - name {{ vlan_name }}
+        parents: vlan {{ vlan_id }}
+        save_when: modified
